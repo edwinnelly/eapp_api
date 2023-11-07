@@ -158,7 +158,7 @@ class controller extends dbc
     //get the user information
     public function get_company_list($host_key)
     {
-        $query = "select * from company_list where host_key='$host_key'";
+        $query = "select * from company_list where host_key='$host_key' order by id desc";
         $query = $this->run_query($query);
         $categories = array();
         while ($row = $this->get_result($query)) {
