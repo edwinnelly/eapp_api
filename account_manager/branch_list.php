@@ -11,18 +11,19 @@ include_once('../config/controller.php');
 if ($_SERVER['REQUEST_METHOD'] === 'GET') {
     //Process a GET request
     $app = new controller;
-    $secure_login = $app->get_request('host_key');
-    $host_key = $app->get_request('secure_e');
-    $id = $app->get_request('account_id');
-    if (!isset($host_key, $secure_login, $id)) {
+    $host_key = $app->get_request('host_key');
+    $secure_login = $app->get_request('secure_e');
+    $branch_id = $app->get_request('branch_id');
+    if (!isset($host_key)) {
         echo "Invalid api Call";
     } else {
         try {
             //validate key
-            $check_e = $app->validateUserHostkey_ad($host_key, $secure_login);
+            $check_e = $app->validateUserHostkey_ad($host_key,$secure_login);
             if ($check_e == "success") {
-                $get_category = $app->delete_company_list($host_key, $id);
+                $get_category = $app->get_branch_list($host_key,$branch_id);
                 echo json_encode($get_category);
+
             } else {
                 echo "Invalid Key";
             }

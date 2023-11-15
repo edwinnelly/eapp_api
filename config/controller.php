@@ -105,6 +105,18 @@ class controller extends dbc
         }
     }
 
+    //add to members
+    public function add_branch($companyname, $address, $btype,$company_id,$host_key,$secure_login,$pid_id)
+    {
+         $query = "INSERT INTO `branch_list` (`id`, `branch_id`,`address`, `branch_name`, `business_id`, `host_key`,`status`) VALUES (NULL, '$company_id','$address', '$companyname', '$pid_id', '$host_key', '1')";
+        $run_qry = $this->run_query($query);
+        if ($run_qry == true) {
+            return json_encode("success");
+        } else {
+            return json_encode("failed");
+        }
+    }
+
 
     //user login
     public function auth_users($email, $password)
@@ -183,6 +195,37 @@ class controller extends dbc
 
     }
 
+    
+    //get the user information
+    public function get_branch_list($host_key,$branch_id)
+    {
+         $query = "select * from branch_list where host_key='$host_key' and business_id='$branch_id' order by id desc";
+        $query = $this->run_query($query);
+        $categories = array();
+        while ($row = $this->get_result($query)) {
+            $obj = new stdClass();
+            $obj->id = $row['id'];
+            $obj->branch_id = $row['branch_id'];
+            $obj->branch_name = $row['branch_name'];
+            $obj->address = $row['address'];
+            $obj->business_id = $row['business_id'];
+            $obj->host_key = $row['host_key'];
+            $obj->created_date = $row['created_date'];
+            $obj->status = $row['status'];
+            $obj->acc_type = $row['acc_type'];
+
+            // if ($obj->currency == 0) {
+            //     $obj->currency_symbol = 'Not Assigned';
+            // } else {
+            //     $get_work_cen = $this->fetch_curreny($row['currency']);
+            //     $obj->currency_symbol = $get_work_cen->currency_symbol;
+            // }
+            $categories[] = $obj;
+        }
+        return json_encode($categories);
+
+    }
+
 
 
 
@@ -224,8 +267,13 @@ class controller extends dbc
 
     public function delete_company_list($host_key,$id)
     {
-        $query = "delete from company_list  where id='$id' and host_key='$host_key'";
-        return $this->runner($query);
+        $query = "delete from company_list  where checker_id='$id' and host_key='$host_key'";
+        $run_qry = $this->run_query($query);
+        if ($run_qry == true) {
+            return json_encode("success");
+        } else {
+            return json_encode("Invalid Command");
+        }
     }
 
 
