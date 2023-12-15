@@ -67,18 +67,18 @@ class controller extends dbc
     }
 
 
-     //validate user account
-     public function validateUserHostkey_ad($host_key,$secure_login)
-     {
-         $query = "select * from len_members where user_key='$host_key' and secure_login='$secure_login'";
-         $run_qry = $this->run_query($query);
-         $check_email = $this->get_number_of_row($run_qry);
-         if ($check_email < 1) {
-             return "failed";
-         } else {
-             return "success";
-         }
-     }
+    //validate user account
+    public function validateUserHostkey_ad($host_key, $secure_login)
+    {
+        $query = "select * from len_members where user_key='$host_key' and secure_login='$secure_login'";
+        $run_qry = $this->run_query($query);
+        $check_email = $this->get_number_of_row($run_qry);
+        if ($check_email < 1) {
+            return "failed";
+        } else {
+            return "success";
+        }
+    }
 
     //add to members
     public function add_new_member($public_key, $email, $password, $username)
@@ -106,12 +106,23 @@ class controller extends dbc
     }
 
     //add to members
-    public function add_branch($companyname, $address, $btype,$company_id,$host_key,$secure_login,$pid_id)
+    public function add_branch($companyname, $address, $btype, $company_id, $host_key, $secure_login, $pid_id)
     {
-         $query = "INSERT INTO `branch_list` (`id`, `branch_id`,`address`, `branch_name`, `business_id`, `host_key`,`status`) VALUES (NULL, '$company_id','$address', '$companyname', '$pid_id', '$host_key', '1')";
+        $query = "INSERT INTO `branch_list` (`id`, `branch_id`,`address`, `branch_name`, `business_id`, `host_key`,`status`) VALUES (NULL, '$company_id','$address', '$companyname', '$pid_id', '$host_key', '1')";
         $run_qry = $this->run_query($query);
         if ($run_qry == true) {
             return json_encode("success");
+        } else {
+            return json_encode("failed");
+        }
+    }
+    //update to store
+    public function UpdateStore($host_key, $legalname, $email_addr, $bis_number, $companyname, $tin, $tax_form, $industry, $currency, $website, $com_addr, $business_id_store,$cellphone)
+    {
+         $query = "UPDATE `company_list` SET `legal_name`='$legalname',`address`='$com_addr',`email_addr`='$email_addr',`tax`='$tax_form',`industry`='$industry',`tax_industry`='$tax_form',`phone`='$cellphone',`company_logo`='',`tin_number`='$tin',`website`='$website',`business_id`='$bis_number' WHERE checker_id='$business_id_store' and host_key='$host_key'";
+        $run_qry = $this->run_query($query);
+        if ($run_qry == true) {
+            return json_encode('success');
         } else {
             return json_encode("failed");
         }
@@ -157,7 +168,7 @@ class controller extends dbc
             $obj->user_key = $row['user_key'];
             $obj->account_activation = $row['account_activation'];
             $obj->secure_login = $row['secure_login'];
-            
+
 
             $categories[] = $obj;
         }
@@ -195,11 +206,33 @@ class controller extends dbc
 
     }
 
-    
-    //get the user information
-    public function get_branch_list($host_key,$branch_id)
+
+    public function edit_company_list($host_key, $company_id)
     {
-         $query = "select * from branch_list where host_key='$host_key' and business_id='$branch_id' order by id desc";
+        $query = "SELECT * FROM company_list WHERE host_key='$host_key' AND checker_id='$company_id' ORDER BY id DESC";
+        $result = $this->run_query($query);
+        if ($result) {
+            $data = [];
+            while ($row = $result->fetch_assoc()) {
+                if ($row['currency'] == 0) {
+                    $row['currency_symbol'] = 'Not Assigned';
+                } else {
+                    $get_work_cen = $this->fetch_curreny($row['currency']);
+                    $row['currency_symbol'] = $get_work_cen->currency_symbol;
+                }
+                $data[] = $row;
+            }
+            echo json_encode($data);
+        } else {
+            echo json_encode(['error' => 'Database query error']);
+        }
+    }
+
+
+    //get the user information
+    public function get_branch_list($host_key, $branch_id)
+    {
+        $query = "select * from branch_list where host_key='$host_key' and business_id='$branch_id' order by id desc";
         $query = $this->run_query($query);
         $categories = array();
         while ($row = $this->get_result($query)) {
@@ -242,7 +275,7 @@ class controller extends dbc
             $obj->currency_name = $row['currency_name'];
             $obj->currency_symbol = $row['currency_symbol'];
 
-           
+
             $categories[] = $obj;
 
         }
@@ -263,9 +296,9 @@ class controller extends dbc
     }
 
 
-    
 
-    public function delete_company_list($host_key,$id)
+
+    public function delete_company_list($host_key, $id)
     {
         $query = "delete from company_list  where checker_id='$id' and host_key='$host_key'";
         $run_qry = $this->run_query($query);

@@ -75,5 +75,10 @@
 			$this->close($con);
 			return $txt;
 		}
+
+		public function clean_input($txt){
+			$txt = htmlentities(htmlspecialchars($txt));
+			return $txt;
+		}
 	}
  ?>
