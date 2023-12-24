@@ -9,7 +9,7 @@ include_once '../config/controller.php';
 
 // Handle the request
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    
+
     $rawData = file_get_contents('php://input');
 
     // Decode the JSON data
@@ -18,7 +18,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $app = new Controller(); // Use proper capitalization for class names
 
     // Validate each property before using it
-    $properties = ['secure_key', 'host_key', 'legalname', 'email_addr', 'business_id', 'companyname', 'tin', 'tax_form', 'industry', 'currency', 'website', 'com_addr', 'business_id_store', 'cellphone'];
+    $properties = ['secure_key','img', 'host_key', 'legalname', 'email_addr', 'business_id', 'companyname', 'tin', 'tax_form', 'industry', 'currency', 'website', 'com_addr', 'business_id_store', 'cellphone'];
     $validatedData = [];
 
     foreach ($properties as $property) {
@@ -38,6 +38,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             if ($check_e == "success") {
                 // Retrieve and output data
                 $get_category = $app->UpdateStore($validatedData);
+
+                // upload logo
+                $uploadLogo = $app->upload_brand_logo($validatedData);
 
                 // Respond with the result (success or error)
                 echo json_encode($get_category);

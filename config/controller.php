@@ -117,77 +117,51 @@ class controller extends dbc
         }
     }
 
-    //$properties = ['secure_key', 'host_key', 'legalname', 'email_addr', 'bis_number', 'companyname', 'tin', 'tax_form', 'industry', 'currency', 'website', 'com_addr', 'business_id_store', 'cellphone'];
-    
+
     public function UpdateStore($validatedData)
-{
-    // Extract values from $validatedData
-    $legalname = $validatedData['legalname'];
-    $com_addr = $validatedData['com_addr'];
-    $email_addr = $validatedData['email_addr'];
-    $tax_form = $validatedData['tax_form'];
-    $industry = $validatedData['industry'];
-    $cellphone = $validatedData['cellphone'];
-    $tin = $validatedData['tin'];
-    $website = $validatedData['website'];
-    $bis_number = $validatedData['business_id'];
-    $business_id_store = $validatedData['business_id_store'];
-    $host_key = $validatedData['host_key'];
+    {
+        // Build the SQL query
+        $query = "UPDATE `company_list` SET
+ `legal_name`='{$validatedData['legalname']}',
+ `address`='{$validatedData['com_addr']}',
+ `email_addr`='{$validatedData['email_addr']}',
+ `tax`='{$validatedData['tax_form']}',
+ `industry`='{$validatedData['industry']}',
+ `tax_industry`='{$validatedData['tax_form']}',
+ `phone`='{$validatedData['cellphone']}',
+ `tin_number`='{$validatedData['tin']}',
+ `website`='{$validatedData['website']}',
+ `business_id`='{$validatedData['business_id']}'
+ WHERE checker_id='{$validatedData['business_id_store']}' AND host_key='{$validatedData['host_key']}'";
+        // Execute the query
+        $run_qry = $this->run_query($query);
 
-    // Build the SQL query
-    $query = "UPDATE `company_list` SET
-              `legal_name`='$legalname',
-              `address`='$com_addr',
-              `email_addr`='$email_addr',
-              `tax`='$tax_form',
-              `industry`='$industry',
-              `tax_industry`='$tax_form',
-              `phone`='$cellphone',
-              `company_logo`='',
-              `tin_number`='$tin',
-              `website`='$website',
-              `business_id`='$bis_number'
-              WHERE checker_id='$business_id_store' AND host_key='$host_key'";
-
-    // Execute the query
-    $run_qry = $this->run_query($query);
-
-    // Check if the query was successful
-    if ($run_qry) {
-        return json_encode('success');
-    } else {
-        return json_encode('failed');
+        // Check if the query was successful
+        if ($run_qry) {
+            return json_encode('success');
+        } else {
+            return json_encode('failed');
+        }
     }
-}
 
 
 
-    //update to store
-    // public function UpdateStore($validatedData)
-    // {
-    //     // return $legalname = $validatedData['legalname'];
-    //     // return(json_encode($validatedData));
-    //     $query = "UPDATE `company_list` SET legal_name=.$validatedData['legalname'],`address`='$com_addr',`email_addr`='$email_addr',`tax`='$tax_form',`industry`='$industry',`tax_industry`='$tax_form',`phone`='$cellphone',`company_logo`='',`tin_number`='$tin',`website`='$website',`business_id`='$bis_number' WHERE checker_id='$business_id_store' and host_key='$host_key'";
-    //     $run_qry = $this->run_query($query);
-    //     if ($run_qry == true) {
-    //         return json_encode($query);
-    //         // return json_encode('success');
-    //     } else {
-    //         return json_encode("failed");
-    //     }
-    // }
-    // //update to store
-    // public function UpdateStore($host_key, $legalname, $email_addr, $bis_number, $companyname, $tin, $tax_form, $industry, $currency, $website, $com_addr, $business_id_store,$cellphone)
-    // {
-    //      $query = "UPDATE `company_list` SET `legal_name`='$legalname',`address`='$com_addr',`email_addr`='$email_addr',`tax`='$tax_form',`industry`='$industry',`tax_industry`='$tax_form',`phone`='$cellphone',`company_logo`='',`tin_number`='$tin',`website`='$website',`business_id`='$bis_number' WHERE checker_id='$business_id_store' and host_key='$host_key'";
-    //     $run_qry = $this->run_query($query);
-    //     if ($run_qry == true) {
-    //         return json_encode($query);
-    //         // return json_encode('success');
-    //     } else {
-    //         return json_encode("failed");
-    //     }
-    // }
+    public function upload_brand_logo($validatedData)
+    {
+        //get the image path from array
+        $img_path = $validatedData['img'];
+        if ($img_path == '') {
+        } else {
+            // Build the SQL query
+            $query = "UPDATE `company_list` SET 
+ `company_logo`='{$validatedData['img']}'
+ WHERE checker_id='{$validatedData['business_id_store']}' AND host_key='{$validatedData['host_key']}'";
+// Execute the query
+$run_qry = $this->run_query($query);
+        }
+
+        
+    }
 
 
     //user login
